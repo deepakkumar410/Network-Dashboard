@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Pie, Bar, Line, Doughnut, PolarArea } from 'react-chartjs-2';
+
 import {
   Chart as ChartJS,
   ArcElement,
@@ -88,8 +89,8 @@ const Dashboard = () => {
         },
       },
       datalabels: {
-        // This will only show percentages for Pie chart
-        display: false, // For all charts except Pie
+
+        display: false,
       },
     },
   };
@@ -99,28 +100,33 @@ const Dashboard = () => {
     plugins: {
       ...chartOptions.plugins,
       datalabels: {
-        display: true, // Always show percentage for Pie chart
-        formatter: function(value, context) {
+        display: true,
+        formatter: function (value, context) {
           const dataset = context.chart.data.datasets[context.datasetIndex];
           const total = dataset.data.reduce((sum, value) => sum + value, 0);
           const percentage = ((value / total) * 100).toFixed(2);
-          return `${percentage}%`; // Display percentage on slices
+          return `${percentage}%`;
         },
         color: 'white',
         font: {
           weight: 'bold',
         },
+        anchor: 'center', // Positioning the label at the center of the segment
+        align: 'center',  // Aligning the label in the center
+        offset: 10, // Adjusting the distance of the label from the center
       },
     },
   };
+  
 
   return (
-    <div className="min-h-screen w-screen bg-gray-900 p-6">
-      <h1 className="text-3xl text-center text-cyan-400 mb-10">🚨 Network Alerts Dashboard</h1>
+    <div className="min-h-screen  bg-gray-900 p-6">
+      <h1 className="text-3xl text-center text-cyan-400 mb-10 font-bold">🚨 Network Alerts Dashboard</h1>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Pie chart for categories */}
-        <div className="bg-gray-800 rounded-2xl p-4 shadow-md">
+        <div className="relative bg-gray-800 rounded-2xl p-4 shadow-md">
+          <h3 className="text-center text-white font-bold mb-2">Alert Categories</h3>
           <Pie
             data={{
               labels: Object.keys(categories),
@@ -131,12 +137,13 @@ const Dashboard = () => {
                 },
               ],
             }}
-            options={pieChartOptions}  // Apply pieChartOptions here
+            options={pieChartOptions}
           />
         </div>
 
         {/* Bar chart for source IPs */}
-        <div className="bg-gray-800 rounded-2xl p-4 shadow-md">
+        <div className="relative bg-gray-800 rounded-2xl p-4 shadow-md">
+          <h3 className="text-center text-white font-bold mb-2">Top Source IPs</h3>
           <Bar
             data={{
               labels: sortedSrcIPs.map(ip => ip[0]),
@@ -148,12 +155,13 @@ const Dashboard = () => {
                 },
               ],
             }}
-            options={chartOptions} // Apply the base chartOptions here
+            options={chartOptions}
           />
         </div>
 
         {/* Line chart for alerts over time */}
-        <div className="bg-gray-800 rounded-2xl p-4 shadow-md">
+        <div className="relative bg-gray-800 rounded-2xl p-4 shadow-md">
+          <h3 className="text-center text-white font-bold mb-2">Alerts Over Time</h3>
           <Line
             data={{
               labels: Object.keys(timestamps),
@@ -168,12 +176,13 @@ const Dashboard = () => {
                 },
               ],
             }}
-            options={chartOptions} // Apply the base chartOptions here
+            options={chartOptions}
           />
         </div>
 
         {/* Doughnut chart for severity levels */}
-        <div className="bg-gray-800 rounded-2xl p-4 shadow-md">
+        <div className="relative bg-gray-800 rounded-2xl p-4 shadow-md">
+          <h3 className="text-center text-white font-bold mb-2">Severity Levels</h3>
           <Doughnut
             data={{
               labels: ['Severity 1', 'Severity 2', 'Severity 3'],
@@ -184,26 +193,30 @@ const Dashboard = () => {
                 },
               ],
             }}
-            options={chartOptions} // Apply the base chartOptions here
+            options={pieChartOptions}
           />
+
         </div>
 
         {/* Polar Area chart for ports */}
-        <div className="bg-gray-800 rounded-2xl p-4 shadow-md">
+        <div className="relative bg-gray-800 rounded-2xl p-4 shadow-md">
+          <h3 className="text-center text-white font-bold mb-2">Top Destination Ports</h3>
           <PolarArea
             data={{
               labels: sortedPorts.map(p => p[0]),
               datasets: [
                 {
                   data: sortedPorts.map(p => p[1]),
-                  backgroundColor: ['#fb923c', '#84cc16', '#facc15', '#0ea5e9', '#9ca3af', '#f97316'],
+                
+                  backgroundColor: ['#fb923c', '#84cc16', '#facc15', '#0ea5e9', '#9ca3af', '#f97316'],  
                 },
               ],
             }}
-            options={chartOptions} // Apply the base chartOptions here
+            options={chartOptions}
           />
         </div>
       </div>
+
 
       <h2 className="text-2xl text-white mt-10 mb-4">Latest Alerts</h2>
 
